@@ -43,3 +43,4 @@ body {
 .slideshow img:nth-child(10) { animation: fade 14s infinite 16s; }
 .slideshow img:nth-child(11) { animation: fade 14s infinite 18s; }
 .slideshow img:nth-child(12) { animation: fade 14s infinite 20s; }
+.slideshow img:nth-child(13) { animation: fade 14s infinite 22s; }
