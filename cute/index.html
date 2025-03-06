@@ -21,5 +21,35 @@
 		<img src="image1/12.jpg" alt="Image 12">
 		<img src="image1/end.jpg" alt="Image 12">
 	</div>
+	<audio id="background-music" autoplay loop muted>
+		<source src="music/song1.mp3" type="audio/mpeg">
+		Trình duyệt của bạn không hỗ trợ phát nhạc.
+	</audio>
+	
+	<script>
+		document.addEventListener("DOMContentLoaded", function () {
+			const music = document.getElementById("background-music");
+	
+			function enableSound() {
+				music.muted = false; // Bật âm thanh sau khi trang tải
+				music.play().then(() => {
+					console.log("Nhạc đang phát!");
+				}).catch(error => {
+					console.log("Chrome vẫn chặn autoplay, chờ người dùng tương tác...");
+				});
+			}
+	
+			// Cố gắng phát nhạc ngay khi tải trang
+			enableSound();
+	
+			// Nếu vẫn bị chặn, thử bật lại khi người dùng tương tác (chỉ chạy 1 lần)
+			document.addEventListener("click", enableSound, { once: true });
+			document.addEventListener("scroll", enableSound, { once: true });
+		});
+	</script>
+	
+	
+	
+	
 </body>
 </html>
