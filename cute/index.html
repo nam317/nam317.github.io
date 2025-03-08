@@ -1,55 +1,142 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-	<meta charset="UTF-8">
-	<title>your eyes</title>
-	<link rel="stylesheet" type="text/css" href="csss.css">
+    <meta charset="UTF-8">
+    <title>your eyes</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        .slideshow {
+            width: 100vw;
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+        }
+        .slideshow img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            position: absolute;
+            opacity: 0;
+            transition: opacity 1s ease-in-out;
+        }
+        .slideshow img.active {
+            opacity: 1;
+        }
+        /* CSS cho nút điều hướng */
+        .nav-button {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(0, 0, 0, 0.5);
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            font-size: 20px;
+            cursor: pointer;
+            z-index: 10;
+        }
+        .nav-button:hover {
+            background: rgba(0, 0, 0, 0.8);
+        }
+        .prev {
+            left: 10px;
+        }
+        .next {
+            right: 10px;
+        }
+    </style>
 </head>
 <body>
-	<div class="slideshow">
-		<img src="image1/1.jpg" alt="Image 1">
-		<img src="image1/2.jpg" alt="Image 2">
-		<img src="image1/3.jpg" alt="Image 3">
-		<img src="image1/4.jpg" alt="Image 4">
-		<img src="image1/5.jpg" alt="Image 5">
-		<img src="image1/6.jpg" alt="Image 6">
-		<img src="image1/7.jpg" alt="Image 7">
-		<img src="image1/8.jpg" alt="Image 8">
-		<img src="image1/9.jpg" alt="Image 9">
-		<img src="image1/10.jpg" alt="Image 10">
-		<img src="image1/11.jpg" alt="Image 11">
-		<img src="image1/12.jpg" alt="Image 12">
-		<img src="image1/end.jpg" alt="Image 12">
-	</div>
-	<audio id="background-music" autoplay loop muted>
-		<source src="music/song1.mp3" type="audio/mpeg">
-		Trình duyệt của bạn không hỗ trợ phát nhạc.
-	</audio>
-	
-	<script>
-		document.addEventListener("DOMContentLoaded", function () {
-			const music = document.getElementById("background-music");
-	
-			function enableSound() {
-				music.muted = false; // Bật âm thanh sau khi trang tải
-				music.play().then(() => {
-					console.log("Nhạc đang phát!");
-				}).catch(error => {
-					console.log("Chrome vẫn chặn autoplay, chờ người dùng tương tác...");
-				});
-			}
-	
-			// Cố gắng phát nhạc ngay khi tải trang
-			enableSound();
-	
-			// Nếu vẫn bị chặn, thử bật lại khi người dùng tương tác (chỉ chạy 1 lần)
-			document.addEventListener("click", enableSound, { once: true });
-			document.addEventListener("scroll", enableSound, { once: true });
-		});
-	</script>
-	
-	
-	
-	
+    <div class="slideshow">
+        <img src="image1/1.jpg" alt="Image 1" class="active">
+        <img src="image1/2.jpg" alt="Image 2">
+        <img src="image1/3.jpg" alt="Image 3">
+        <img src="image1/4.jpg" alt="Image 4">
+        <img src="image1/5.jpg" alt="Image 5">
+        <img src="image1/6.jpg" alt="Image 6">
+        <img src="image1/7.jpg" alt="Image 7">
+        
+        <!-- Nút điều hướng -->
+        <button class="nav-button prev">❮</button>
+        <button class="nav-button next">❯</button>
+    </div>
+
+    <audio id="background-music" autoplay loop muted>
+        <source src="music/song2.mp3" type="audio/mpeg">
+        Trình duyệt của bạn không hỗ trợ phát nhạc.
+    </audio>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const images = document.querySelectorAll(".slideshow img");
+            const prevButton = document.querySelector(".prev");
+            const nextButton = document.querySelector(".next");
+            let currentIndex = 0;
+            let interval;
+
+            function showImage(index) {
+                images[currentIndex].classList.remove("active");
+                images[index].classList.add("active");
+                currentIndex = index;
+                
+                // Ẩn nút khi đến đầu hoặc cuối
+                prevButton.style.display = (currentIndex === 0) ? "none" : "block";
+                nextButton.style.display = (currentIndex === images.length - 1) ? "none" : "block";
+            }
+
+            function showNextImage() {
+                if (currentIndex < images.length - 1) {
+                    showImage(currentIndex + 1);
+                } else {
+                    clearInterval(interval);
+                }
+            }
+
+            function showPrevImage() {
+                if (currentIndex > 0) {
+                    showImage(currentIndex - 1);
+                }
+            }
+
+            function resetTimer() {
+                clearInterval(interval);
+                interval = setInterval(showNextImage, 4000); // 4 giây tự động chuyển
+            }
+
+            nextButton.addEventListener("click", function () {
+                showNextImage();
+                resetTimer();
+            });
+
+            prevButton.addEventListener("click", function () {
+                showPrevImage();
+                resetTimer();
+            });
+
+            interval = setInterval(showNextImage, 4000); // Bắt đầu tự động chuyển ảnh
+
+            const music = document.getElementById("background-music");
+            function enableSound() {
+                music.muted = false;
+                music.play().catch(() => {
+                    console.log("Chrome chặn autoplay, chờ người dùng tương tác...");
+                });
+            }
+
+            enableSound();
+            document.addEventListener("click", enableSound, { once: true });
+            document.addEventListener("scroll", enableSound, { once: true });
+
+            // Ẩn nút Back khi ở ảnh đầu tiên
+            prevButton.style.display = "none";
+        });
+    </script>
 </body>
 </html>
